@@ -16,29 +16,42 @@ db.init_app(app)
 
 # TODO: add functionality to all routes
 
-@app.route('/events')
+@app.route('/events', methods=['GET'])
 def get_events():
-    pass
+    events = Event.query.all()
+    return jsonify([event.to_dict() for event in events]), 200
 
 
-@app.route('/events/<int:id>/sessions')
+@app.route('/events/<int:id>/sessions', methods=['GET'])
 def get_event_sessions(id):
-    pass
+    event = Event.query.get(id)
+    if not event:
+        return jsonify({"error": "Event not found"}), 404
+    return jsonify([session.to_dict() for session in event.sessions]), 200
 
 
-@app.route('/speakers')
+@app.route('/speakers', methods=['GET'])
 def get_speakers():
-    pass
+    speakers = Speaker.query.all()
+    return jsonify([speaker.to_dict() for speaker in speakers]), 200
 
 
-@app.route('/speakers/<int:id>')
+@app.route('/speakers/<int:id>', methods=['GET'])
 def get_speaker(id):
-    pass
+    speaker = Speaker.query.get(id)
+    if not speaker:
+        return jsonify({"error": "Speaker not found"}), 404
+    return jsonify(speaker.to_dict_bio()), 200
 
 
-@app.route('/sessions/<int:id>/speakers')
+@app.route('/sessions/<int:id>/speakers', methods=['GET'])
 def get_session_speakers(id):
-    pass
+    session = Session.query.get(id)
+    if not session:
+        return jsonify({"error": "Session not found"}), 404
+    
+    return jsonify([speaker.to_dict_bio() for speaker in session.speakers]), 200
+    
 
 
 if __name__ == '__main__':
